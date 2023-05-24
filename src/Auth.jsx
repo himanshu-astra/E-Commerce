@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { AccessTokenContext } from "./App";
-import axios from "axios";
+import { gloabalAxiosWithInterceptor as axios } from "./axios";
 
 const Auth = () => {
   const [formData, setFormData] = useState({
@@ -33,13 +33,12 @@ const Auth = () => {
     };
 
     const response = await axios.request(config);
-    const jsonResponse = await response.json();
+    const jsonResponse = await response.data;
     const accessToken = jsonResponse.access_token;
     const refreshToken = jsonResponse.refresh_token;
 
     // Refresh Token, keep it in a HttpOnly browser cookie.
-    document.cookie = `refreshToken=${refreshToken}; SameSite=None; Secure;`;
-
+    localStorage.setItem("refreshToken", refreshToken);
     // Set Access token in memory. (React State)
     setAccessToken(accessToken);
   };

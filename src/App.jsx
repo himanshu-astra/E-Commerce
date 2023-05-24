@@ -1,6 +1,11 @@
 import "./App.css";
 import Auth from "./Auth";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import jwt_decode from "jwt-decode";
+import {
+  gloabalAxiosWithInterceptor as axios,
+  axiosWithoutInterceptor,
+} from "./axios";
 
 export const AccessTokenContext = createContext(null);
 
@@ -8,6 +13,46 @@ export const AccessTokenContext = createContext(null);
 
 function App() {
   const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const interceptorId = axios.interceptors.request.use(
+      async (config) => {
+        if (token) {
+          const decoded = jwt_decode(token);
+          const expiresOnEpoch = decoded.exp;
+          const todaysTime = Date.now();
+          let newToken = token;
+
+          if (todaysTime > expiresOnEpoch) {
+            const config = {
+              url: " https://api.escuelajs.co/api/v1/auth/refresh-token",
+              method: "post",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              validateStatus: null,
+              data: {
+                refreshToken: localStorage.getItem("refreshToken"),
+              },
+            };
+            const response = await axiosWithoutInterceptor.request(config);
+            const newAccessToken = response.data.access_token;
+            setToken(newAccessToken);
+            newToken = newAccessToken;
+          }
+          config.headers["Authorization"] = "Bearer " + newToken;
+        }
+        return config;
+      },
+      (error) => {
+        Promise.reject(error);
+      }
+    );
+
+    return () => {
+      axios.interceptors.request.eject(interceptorId);
+    };
+  }, [token]);
 
   return (
     <AccessTokenContext.Provider value={{ token, setToken }}>
