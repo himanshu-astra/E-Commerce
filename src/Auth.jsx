@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { AccessTokenContext } from "./App";
+import axios from "axios";
 
 const Auth = () => {
   const [formData, setFormData] = useState({
@@ -17,22 +18,21 @@ const Auth = () => {
   };
 
   const loginUser = async (e) => {
-    //{
-    //   email: "john@mail.com",
-    //   password: "changeme",
-    // }
-
     e.preventDefault();
-    const response = await fetch("https://api.escuelajs.co/api/v1/auth/login", {
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
+
+    const config = {
+      url: "https://api.escuelajs.co/api/v1/auth/login",
+      method: "post",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        email: formData.email,
-        password: formData.password,
-      }),
-    });
+      data: {
+        email: "john@mail.com",
+        password: "changeme",
+      },
+    };
+
+    const response = await axios.request(config);
     const jsonResponse = await response.json();
     const accessToken = jsonResponse.access_token;
     const refreshToken = jsonResponse.refresh_token;
