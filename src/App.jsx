@@ -6,6 +6,8 @@ import {
   gloabalAxiosWithInterceptor as axios,
   axiosWithoutInterceptor,
 } from "./axios";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProductList from "./ProductList";
 
 export const AccessTokenContext = createContext(null);
 
@@ -55,9 +57,14 @@ function App() {
   }, [token]);
 
   return (
-    <AccessTokenContext.Provider value={{ token, setToken }}>
-      <Auth />
-    </AccessTokenContext.Provider>
+    <BrowserRouter>
+      <AccessTokenContext.Provider value={{ token, setToken }}>
+        <Routes>
+          <Route path="/login" element={<Auth />} />
+          <Route path="/" element={<ProductList />} />
+        </Routes>
+      </AccessTokenContext.Provider>
+    </BrowserRouter>
   );
 }
 
