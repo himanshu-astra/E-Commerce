@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { gloabalAxiosWithInterceptor as axios } from "./axios";
 
+// Add categoryId as a filter.
+// https://fakeapi.platzi.com/en/rest/products-filter
+
 const Product = (props) => {
   return (
     <div>
