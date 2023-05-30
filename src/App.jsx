@@ -8,6 +8,7 @@ import {
 } from "./axios";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProductList from "./ProductList";
+import Checkout from "./Checkout";
 
 export const AccessTokenContext = createContext(null);
 
@@ -62,6 +63,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Auth />} />
           <Route path="/" element={<ProductList />} />
+          <Route path="/checkout" element={<Checkout />} />
         </Routes>
       </AccessTokenContext.Provider>
     </BrowserRouter>
